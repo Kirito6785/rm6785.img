@@ -1,0 +1,3 @@
+# System-only build, keep original vendor partition
+# Resize partition system to 3963682816
+resize system 3963682816

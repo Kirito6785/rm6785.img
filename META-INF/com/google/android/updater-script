@@ -1,0 +1,32 @@
+assert(getprop("ro.product.device") == "RMX2001" || getprop("ro.build.product") == "RMX2001" || abort("E3004: This package is for device: RMX2001; this device is " + getprop("ro.product.device") + "."););
+ui_print("Target: realme/RMX2001/RMX2001L1:10/QP1A.190711.020/1594211000:user/release-keys");
+package_extract_dir("install", "/tmp/install");
+set_metadata_recursive("/tmp/install", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644);
+set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
+map_partition("vendor");
+run_program("/tmp/install/bin/backuptool.sh", "backup", map_partition("system"), "ext4");
+
+# --- Start patching dynamic partitions ---
+
+
+# Update dynamic partition metadata
+
+assert(update_dynamic_partitions(package_extract_file("dynamic_partitions_op_list")));
+
+# Patch partition system
+
+ui_print("Patching system image unconditionally...");
+show_progress(0.900000, 0);
+block_image_update(map_partition("system"), package_extract_file("system.transfer.list"), "system.new.dat.br", "system.patch.dat") ||
+  abort("E1001: Failed to update system image.");
+
+# --- End patching dynamic partitions ---
+
+show_progress(0.020000, 10);
+map_partition("vendor");
+run_program("/tmp/install/bin/backuptool.sh", "restore", map_partition("system"), "ext4");
+package_extract_file("boot.img", "/dev/block/platform/bootdevice/by-name/boot");
+show_progress(0.100000, 10);
+ui_print("Patching firmware images...");
+package_extract_file("vbmeta.img", "/dev/block/by-name/vbmeta");
+set_progress(1.000000);

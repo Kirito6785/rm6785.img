@@ -1,0 +1,9 @@
+ota-property-files=metadata:69:290         
+ota-required-cache=0
+ota-type=BLOCK
+post-build=realme/RMX2001/RMX2001L1:10/QP1A.190711.020/1594211000:user/release-keys
+post-build-incremental=31
+post-sdk-level=30
+post-security-patch-level=2021-09-05
+post-timestamp=1631277408
+pre-device=RMX2001
